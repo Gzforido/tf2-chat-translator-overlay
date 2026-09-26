@@ -1,0 +1,32 @@
+# Never publish local credentials or game/Steam configuration.
+/config.json
+/config.json.tmp
+.env
+.env.*
+*.key
+*.pem
+*.vdf
+*.cfg
+
+# Local output and caches.
+*.log
+*.tmp
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+dist/
+build/
+*.spec
+.claude/
+.firecrawl/
+.idea/
+.vscode/
+
+# Local backups and screenshots may contain player data.
+*.zip
+*.7z
+*.png
+*.jpg
+*.jpeg

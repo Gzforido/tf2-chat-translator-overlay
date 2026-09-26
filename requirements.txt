@@ -1,0 +1,4 @@
+PyQt6>=6.4.0
+deepl>=1.17.0
+langdetect>=1.0.9
+pynput>=1.7.7
