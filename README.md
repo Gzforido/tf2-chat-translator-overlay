@@ -1,41 +1,85 @@
-# TF2 Chat Translator Overlay
+<p align="center">
+  <img src="assets/readme-banner.svg" alt="TF2 Chat Translator Overlay — Understand every callout" width="100%" />
+</p>
 
-Open-source Windows overlay for Team Fortress 2 chat translation and player inventory values. It reads TF2 `console.log`, translates chat with DeepL, offers a reverse-translation input window, and can show inventory values from Steam and backpack.tf. The interface and setup instructions are currently in Russian.
+<p align="center">
+  <a href="#features">Features</a> ·
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#configuration-and-security">Configuration</a> ·
+  <a href="#license">License</a>
+</p>
 
-Открытый Windows-проект для перевода чата Team Fortress 2 и отображения оценок инвентарей игроков. Оверлеи написаны на PyQt6; исходный код распространяется по лицензии MIT.
+<p align="center">
+  <img src="https://img.shields.io/badge/Windows-10%20%7C%2011-1477A9?logo=windows&logoColor=white" alt="Windows 10 and 11" />
+  <img src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white" alt="Python 3.11 or newer" />
+  <img src="https://img.shields.io/badge/PyQt6-6.4%2B-168B89?logo=qt&logoColor=white" alt="PyQt6 6.4 or newer" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-39B9B5" alt="MIT license" /></a>
+</p>
 
-## Требования
+<p align="center">
+  <strong>Перевод чата Team Fortress 2 поверх игры — без переключения окон.</strong><br />
+  Чат, обратный перевод и оценка инвентарей в двух компактных оверлеях для Windows.
+</p>
 
-- Windows 10/11, Python 3.11+ и pip.
-- Team Fortress 2 с параметрами запуска `-condebug -usercon`. Программе нужен доступ к `tf/console.log`.
-- Собственный ключ DeepL API для перевода. Для сканирования инвентарей дополнительно нужны ключи Steam Web API и backpack.tf; токен backpack.tf используется для C/S-оценок, если доступен соответствующий API. Резервный HTML-парсер профилей может перестать работать при изменении сайта.
-- TF2 в оконном режиме или безрамочном окне: обычный эксклюзивный полноэкранный режим может не показывать Qt-оверлей.
+> [!NOTE]
+> Для перевода нужен **собственный ключ DeepL API**. Инвентари — дополнительная функция: для неё нужны ключи Steam Web API и backpack.tf. Проект не связан с Valve или этими сервисами.
 
-## Быстрый запуск
+## Features
 
-1. Скачайте исходники и распакуйте папку проекта. Не копируйте чужой `config.json`.
-2. Запустите [`setup_api.bat`](setup_api.bat). Он покажет официальные страницы для получения собственных ключей и запросит их в консоли со скрытым вводом. Пустой ввод оставит уже сохранённое значение; необязательные ключи можно пропустить.
-3. Если Steam/TF2 установлены не по стандартному пути, откройте созданный локальный `config.json` и исправьте `log_path`. Для RCON адрес оставьте `"auto"`, если не знаете точный адрес своего локального клиента.
-4. Запустите [`run.bat`](run.bat). Он установит Python-зависимости при необходимости, проверит ключ DeepL, настроит RCON-параметры TF2 и запустит программу.
+| Возможность | Что делает |
+| --- | --- |
+| **Live chat translation** | Читает новые сообщения из `tf/console.log`, переводит через DeepL и показывает оригинал вместе с переводом. |
+| **Reverse translation** | Переводит ваш текст перед отправкой в общий или командный чат. В окне можно выбрать RU / EN / ZH и скопировать исходный либо переведённый текст. |
+| **Inventory values** | Показывает оценки инвентарей игроков в USD (C/S), когда доступны данные Steam и backpack.tf. Есть фильтр команды и минимальной цены. |
+| **Overlay controls** | Оверлеи пропускают клики по умолчанию; положение и размер можно менять, а при уходе из TF2 они скрываются. |
 
-Официальные страницы получения ключей: [DeepL](https://www.deepl.com/en/developers), [Steam Web API](https://steamcommunity.com/dev/apikey), [backpack.tf](https://next.backpack.tf/account/api-access). Не публикуйте ключи, токены, локальный `config.json`, логи или Steam `localconfig.vdf`. При утечке отзовите ключ на соответствующем сайте и получите новый.
+## Quick start
 
-## Использование
+1. Установите **Python 3.11+** на Windows 10/11. Скачайте проект ZIP-архивом через зелёную кнопку **Code** или клонируйте:
 
-- `Insert` — включить/выключить перемещение и изменение размеров оверлеев.
-- `Home` — открыть/закрыть окно ввода для обратного перевода.
-- `Scroll Lock` — переключить общий/командный чат.
-- В окне инвентарей можно выбрать «Все», «Союзники», «Противники» и минимальную цену.
+   ```powershell
+   git clone https://github.com/Gzforido/tf2-chat-translator-overlay.git
+   cd tf2-chat-translator-overlay
+   ```
 
-Клавиши, языки, позиции, размеры, пути и RCON-порт меняются в локальном `config.json`. Шаблон со всеми полями: [`config.example.json`](config.example.json). При фильтрации по командам отображаются только игроки, чья команда подтверждена данными текущего матча; при отсутствии команды некоторые игроки могут не показываться.
+2. Добавьте в параметры запуска TF2 в Steam флаги `-condebug -usercon`. Они нужны для `console.log` и клиентского RCON.
+3. Запустите [`setup_api.bat`](setup_api.bat). Он покажет официальные страницы получения ключей и сохранит введённые значения в локальный `config.json`. Достаточно ключа DeepL, если нужны только переводы чата.
+4. Если TF2 установлена в другом месте, укажите путь к `tf/console.log` в `log_path` созданного `config.json`.
+5. Запустите [`run.bat`](run.bat). При необходимости он установит зависимости и запустит приложение.
 
-## Как устроена безопасность ключей
+Официальные страницы ключей: [DeepL API](https://www.deepl.com/en/developers) · [Steam Web API](https://steamcommunity.com/dev/apikey) · [backpack.tf](https://next.backpack.tf/account/api-access).
 
-`setup_api.bat` вызывает [`utils/setup_api.py`](utils/setup_api.py), который сохраняет секреты в `config.json` рядом с `main.py`. Этот файл исключён через `.gitignore`; ключи не записываются в исходные `.py` и не включаются в однофайловый EXE. Для локального RCON при первой настройке генерируется отдельный случайный пароль. Настройка TF2 может сохранить его также в локальных настройках Steam/TF2 — это не файлы репозитория.
+## Controls
 
-Перед первым `git push` всё равно проверьте `git status` и содержимое коммита: `.gitignore` не защищает файлы, которые были добавлены в Git ранее. В этой папке намеренно отсутствуют рабочий `config.json`, логи, сборки и архивы бэкапов.
+| Клавиша | Действие |
+| --- | --- |
+| `Insert` | Включить или выключить перемещение и изменение размеров оверлеев. |
+| `Home` | Открыть или закрыть окно обратного перевода. |
+| `Scroll Lock` | Переключить общий и командный чат. |
 
-## Проверка и сборка
+В окне инвентарей можно выбрать **Все / Союзники / Противники** и минимальную цену. Если команда игрока не определена по данным текущего матча, он не попадёт в фильтры союзников и противников. Горячие клавиши и параметры оверлеев меняются в `config.json`.
+
+## How it works
+
+```mermaid
+flowchart LR
+    LOG["TF2 console.log"] --> PARSER["Chat parser"] --> DEEPL["DeepL"] --> CHAT["Chat overlay"]
+    INPUT["Input window"] --> DEEPL --> SENDER["Chat sender"] --> TF2["TF2"]
+    RCON["RCON status + lobby"] --> LOG --> PLAYERS["Steam IDs + teams"] --> VALUES["Steam + backpack.tf"] --> HUD["Inventory overlay"]
+```
+
+Чат читается из лог-файла; запросы перевода выполняются в фоновых потоках. Инвентарный блок отдельно получает игроков через клиентский RCON и оценивает доступные инвентари. Если API недоступен или инвентарь приватный, значение может отсутствовать — это не означает нулевую стоимость.
+
+## Configuration and security
+
+Полный шаблон настроек — [`config.example.json`](config.example.json). Скрипт [`setup_api.bat`](setup_api.bat) принимает ключи со скрытым вводом и сохраняет их только в локальный `config.json`, который исключён из Git через [`.gitignore`](.gitignore). При первой настройке также создаётся отдельный случайный пароль RCON. Параметры запуска Steam/TF2 могут хранить этот пароль локально вне репозитория.
+
+**Не добавляйте** в коммиты `config.json`, игровые логи, `localconfig.vdf` и бэкапы. Если ключ уже был опубликован, отзовите его на сайте сервиса и получите новый. Перед отправкой изменений проверяйте `git status` и список файлов коммита.
+
+## Development and build
+
+Стек: Python 3.11+, PyQt6 6.4+, DeepL SDK, langdetect, pynput. Проверка исходников:
 
 ```powershell
 python -m pip install -r requirements.txt
@@ -43,16 +87,19 @@ python -m unittest discover -s tests -v
 python -m compileall -q main.py core ui utils tests
 ```
 
-Для сборки Windows EXE запустите [`build_exe.bat`](build_exe.bat). Готовый файл появится в `dist/`. Конфигурация не упаковывается: для запуска EXE создайте отдельный `dist/config.json` по примеру `config.example.json` и впишите свои ключи вручную. Папку `dist/` не публикуйте вместе с ключами.
+Для сборки одного Windows EXE запустите [`build_exe.bat`](build_exe.bat). Он создаёт `dist/TF2ChatTranslator.exe` и **не упаковывает ключи**. Для запуска EXE нужен отдельный `dist/config.json`, созданный по примеру `dist/config.example.json`. Не публикуйте `dist/` вместе со своими настройками.
 
-## Ограничения
+## Limitations
 
-- Инвентарная оценка зависит от доступности Steam и backpack.tf, приватности профиля и актуальности внешних цен. Это оценка, не гарантированная цена продажи.
-- Программа отправляет текст через симуляцию клавиатуры в текущее активное окно. Убедитесь, что TF2 в фокусе перед отправкой.
-- Скрипт настройки TF2 меняет локальные параметры запуска Steam и при необходимости `autoexec.cfg`. Проверяйте эти изменения, если у вас нестандартная конфигурация игры.
+- Оверлей рассчитан на оконный или безрамочный режим TF2; эксклюзивный полноэкранный режим может его скрывать.
+- Отправка сообщения симулирует клавиатуру в активном окне. Перед Enter убедитесь, что TF2 в фокусе.
+- Оценки инвентарей зависят от Steam, backpack.tf и приватности профиля. Это ориентир, а не гарантированная цена продажи; HTML-парсер может перестать работать после изменений сайта.
+- Скрипт настройки TF2 может изменить локальные параметры запуска Steam и `autoexec.cfg`. Если используете собственную конфигурацию игры, проверьте эти файлы.
 
-## Лицензия
+## Contributing
 
-[MIT](LICENSE) · Copyright (c) 2026 [Gzforido](https://github.com/Gzforido). Проект не связан с Valve, DeepL, Steam или backpack.tf.
+Нашли ошибку или хотите улучшить проект? Откройте [issue](https://github.com/Gzforido/tf2-chat-translator-overlay/issues) или предложите pull request. Для изменений, затрагивающих ключи и логи, не прикладывайте реальные секреты и личные данные игроков.
 
-Для публикации на GitHub см. [`PUBLISHING.md`](PUBLISHING.md).
+## License
+
+[MIT](LICENSE) © 2026 [Gzforido](https://github.com/Gzforido). Team Fortress 2, Steam, DeepL и backpack.tf принадлежат их владельцам; этот проект не является официальным продуктом этих сервисов.
